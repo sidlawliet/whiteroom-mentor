@@ -56,8 +56,11 @@ export const generateResponse = async (
   attachedImage?: string
 ): Promise<{ text: string; focus?: string }> => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  console.log("DEBUG: Full Env:", import.meta.env);
+  console.log("DEBUG: API Key value:", apiKey);
+
   if (!apiKey) {
-    throw new Error("API Key not found in environment.");
+    throw new Error("API Key not found in environment. Check console for 'DEBUG: Full Env'");
   }
 
   const ai = new GoogleGenAI({ apiKey });
