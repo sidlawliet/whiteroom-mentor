@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { LogIn, Mail, Lock } from 'lucide-react';
+import { auth } from '../services/firebase';
 
 export default function SignIn() {
     const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
@@ -32,12 +33,31 @@ export default function SignIn() {
     const handleGoogleSignIn = async () => {
         setError(null);
         setLoading(true);
+        console.log("Starting Google Sign In...");
+
+        // Debug Config
+        try {
+            // @ts-ignore
+            console.log("Firebase Auth Config:", auth.app.options);
+        } catch (e) {
+            console.error("Could not log auth config", e);
+        }
+
         try {
             await signInWithGoogle();
         } catch (err: any) {
             console.error("Google Sign In Error:", err);
-            const msg = err.code ? err.code.replace('auth/', '').replace(/-/g, ' ') : 'Google Sign In Failed';
-            setError(msg.charAt(0).toUpperCase() + msg.slice(1));
+            let msg = err.code ? err.code.replace('auth/', '').replace(/-/g, ' ') : (err.message || 'Google Sign In Failed');
+
+            // Capitalize
+            msg = msg.charAt(0).toUpperCase() + msg.slice(1);
+
+            // Append raw code if available for clarity
+            if (err.code) {
+                msg += ` (${err.code})`;
+            }
+
+            setError(msg);
         } finally {
             setLoading(false);
         }
