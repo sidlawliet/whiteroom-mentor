@@ -29,6 +29,20 @@ export default function SignIn() {
         }
     };
 
+    const handleGoogleSignIn = async () => {
+        setError(null);
+        setLoading(true);
+        try {
+            await signInWithGoogle();
+        } catch (err: any) {
+            console.error("Google Sign In Error:", err);
+            const msg = err.code ? err.code.replace('auth/', '').replace(/-/g, ' ') : 'Google Sign In Failed';
+            setError(msg.charAt(0).toUpperCase() + msg.slice(1));
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 font-sans">
             <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 border border-gray-100">
@@ -91,9 +105,10 @@ export default function SignIn() {
                     </div>
 
                     <button
-                        onClick={() => signInWithGoogle()}
+                        onClick={handleGoogleSignIn}
                         type="button"
-                        className="w-full flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded transition-all duration-300 group text-sm"
+                        disabled={loading}
+                        className="w-full flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded transition-all duration-300 group text-sm disabled:opacity-50"
                     >
                         <LogIn size={16} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
                         <span>Sign in with Google</span>
